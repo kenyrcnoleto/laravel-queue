@@ -9,7 +9,19 @@
 			"name": "Ping",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "https://api.github.com/octocat",
+					"protocol": "https",
+					"host": [
+						"api",
+						"github",
+						"com"
+					],
+					"path": [
+						"octocat"
+					]
+				}
 			},
 			"response": []
 		},
@@ -17,7 +29,22 @@
 			"name": "GetPullRequest",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "https://api.github.com/repos/laravel/laravel/pulls",
+					"protocol": "https",
+					"host": [
+						"api",
+						"github",
+						"com"
+					],
+					"path": [
+						"repos",
+						"laravel",
+						"laravel",
+						"pulls"
+					]
+				}
 			},
 			"response": []
 		}

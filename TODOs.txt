@@ -1,0 +1,11 @@
+-> Authentication
+    -> GitHub App(OAuth2)
+    -> Personal Access Token
+-> Rate Limiting
+->Best Practices
+    ->Webhooks
+->Travar a versão da API
+
+->Quero fazer dar certo comsumir algum dado do GitHub
+    - Achar um endpoint que não precisa de autenticação
+    - Fzer a autenticação e comsumir o endpoint
