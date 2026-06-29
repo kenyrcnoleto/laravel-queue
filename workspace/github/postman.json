@@ -31,22 +31,57 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://api.github.com/repos/laravel/laravel/pulls",
-					"protocol": "https",
+					"raw": "{{BASE_URL}}/repos/laravel/laravel/pulls?state=all",
 					"host": [
-						"api",
-						"github",
-						"com"
+						"{{BASE_URL}}"
 					],
 					"path": [
 						"repos",
 						"laravel",
 						"laravel",
 						"pulls"
+					],
+					"query": [
+						{
+							"key": "state",
+							"value": "all"
+						}
 					]
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "https://api.github.com",
+			"type": "default"
+		},
+		{
+			"key": "API_VERSION",
+			"value": "2022-11-28",
+			"type": "default"
 		}
 	]
 }
