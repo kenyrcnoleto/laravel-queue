@@ -5,7 +5,7 @@
 ->Best Practices
     ->Webhooks
 ->Travar a versão da API
+    -No postman (Ok)
+    -No codigo
 
-->Quero fazer dar certo comsumir algum dado do GitHub
-    - Achar um endpoint que não precisa de autenticação
-    - Fzer a autenticação e comsumir o endpoint
+->Fzer a autenticação e comsumir o endpoint
