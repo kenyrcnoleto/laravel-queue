@@ -14,15 +14,62 @@ class PullRequestsSync implements ShouldQueue
 
 
 
+    public function __construct(public ?int $page = 1)
+    {
+        //
+    }
+
+
+
     /**
      * Execute the job.
      */
     public function handle(): void
     {
-        dump('PullRequestsSync job executed');
-        $pullRequests = Http::get('https://api.github.com/repos/laravel/laravel/pulls');
+        // dump('PullRequestsSync job executed');
+        // $this->sync();
 
-       foreach ($pullRequests->json() as $pullRequest) {
+        $url = 'https://api.github.com/repos/laravel/laravel/pulls?state=all&page=' . $this->page;
+
+        dump('PullRequestsSync job executed', $url);
+
+        $pullRequestsResponse = Http::withToken(config('services.github.personal_access_token'))
+                                ->get($url);
+
+        $pullRequests = $pullRequestsResponse->json();
+
+        // dd('ok',$pullRequests);
+
+        if(empty($pullRequests) || !is_array($pullRequests)) {
+            return;
+        }
+
+
+       foreach ($pullRequests as $pullRequest) {
+            PullRequestStore::dispatch($pullRequest);
+       }
+
+       PullRequestsSync::dispatch($this->page + 1);
+
+    }
+
+
+    /*public function sync(int $page = 1): void
+    {
+        $pullRequestsResponse = Http::get('https://api.github.com/repos/laravel/laravel/pulls?state=all&page=' . $page);
+
+        $pullRequests = $pullRequestsResponse->json();
+
+        if(empty($pullRequests) || !is_array($pullRequests)) {
+            return;
+        }
+
+        foreach ($pullRequests as $pullRequest) {
+
+            dd($pullRequest);
+        }
+
+        foreach ($pullRequests as $pullRequest) {
             PullRequest::create(
                 [
                     'api_id' => $pullRequest['id'],
@@ -36,5 +83,8 @@ class PullRequestsSync implements ShouldQueue
                 ]
             );
        }
-    }
+
+       $this->sync($page + 1);
+
+    }*/
 }
