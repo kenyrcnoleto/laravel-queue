@@ -14,7 +14,7 @@ class PullRequestsSync implements ShouldQueue
 
 
 
-    public function __construct(public ?int $page = 1)
+    public function __construct(public string $repositoryFullName, public ?int $page = 1)
     {
         //
     }
@@ -38,9 +38,10 @@ class PullRequestsSync implements ShouldQueue
         // $this->sync();
 
         //Obter a lista de pull requests do repositório laravel/laravel usando a API do GitHub.
-        $url = 'https://api.github.com/repos/laravel/laravel/pulls?state=all&page=' . $this->page;
+        $url = 'https://api.github.com/repos/' . $this->repositoryFullName . '/pulls?state=all&page=' . $this->page;
 
         dump('PullRequestsSync job executed', $url);
+        // dd('deu certo');
 
         $pullRequestsResponse = Http::withToken(config('services.github.personal_access_token'))
                                 ->get($url);
@@ -60,8 +61,10 @@ class PullRequestsSync implements ShouldQueue
             PullRequestStore::dispatch($pullRequest);
        }
 
+       $nextPage = $this->page + 1;
+
        // Chamar o próximo job para a próxima página de pull requests.
-       PullRequestsSync::dispatch($this->page + 1);
+       PullRequestsSync::dispatch($this->repositoryFullName, $nextPage);
 
     }
 
