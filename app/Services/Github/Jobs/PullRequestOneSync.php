@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Services\Github\Jobs;
 
 use App\Models\PullRequest;
+use App\Services\Github\PullRequestService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
-class PullRequestsSync implements ShouldQueue
+class PullRequestOneSync implements ShouldQueue
 {
     use Queueable;
 
@@ -19,38 +20,14 @@ class PullRequestsSync implements ShouldQueue
         //
     }
 
-
-    //Economizar chamadas ao banco de dados, evitando a criação de registros duplicados. vs job responsabilidade unica
-    //ou economiza memória, evitando a criação de registros duplicados em memória.
-    //economiza processamento, evitando a criação de registros duplicados em memória e no banco de dados.
-
-    //  Fazer a pergunta: E se esse job falhar?
-    // o job precisa ter responsabilidade unica, e não depender de outros jobs para funcionar corretamente.
-    //tem que processar o mais rápido possível, e não depender de outros jobs para funcionar corretamente.
-    //deve ser sucetível a falhas, e não depender de outros jobs para funcionar corretamente.
-
     /**
      * Execute the job.
      */
     public function handle(): void
     {
-        // dump('PullRequestsSync job executed');
-        // $this->sync();
+        $pullRequests = (new PullRequestService())->getPullRequests($this->repositoryFullName, $this->page);
 
-        //Obter a lista de pull requests do repositório laravel/laravel usando a API do GitHub.
-        $url = 'https://api.github.com/repos/' . $this->repositoryFullName . '/pulls?state=all&page=' . $this->page;
 
-        dump('PullRequestsSync job executed', $url);
-        // dd('deu certo');
-
-        $pullRequestsResponse = Http::withToken(config('services.github.personal_access_token'))
-                                ->get($url);
-
-        $pullRequests = $pullRequestsResponse->json();
-
-        // dd('ok',$pullRequests);
-
-        // Verificar se a resposta da API é válida e contém pull requests, caso contrário, retornar sem fazer nada.
         if(empty($pullRequests) || !is_array($pullRequests)) {
             return;
         }
@@ -58,13 +35,13 @@ class PullRequestsSync implements ShouldQueue
 
        foreach ($pullRequests as $pullRequest) {
             //Salvar cada pull request em um job separado, para evitar sobrecarga de memória e processamento.
-            PullRequestStore::dispatch($this->repositoryFullName, $pullRequest['number']);
+            PullRequestSync::dispatch($this->repositoryFullName, $pullRequest['number']);
        }
 
        $nextPage = $this->page + 1;
 
        // Chamar o próximo job para a próxima página de pull requests.
-       PullRequestsSync::dispatch($this->repositoryFullName, $nextPage);
+       PullRequestOneSync::dispatch($this->repositoryFullName, $nextPage);
 
     }
 

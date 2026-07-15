@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Services\Github\Jobs;
 
 use App\Models\PullRequest;
+use App\Services\Github\PullRequestService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Carbon;
@@ -29,15 +30,8 @@ class PullRequestSync implements ShouldQueue
      */
     public function handle(): void
     {
-        $url = 'https://api.github.com/repos/' . $this->repositoryFullName . '/pulls/' . $this->number;
+        $pullRequest = (new PullRequestService())->getPullRequest($this->repositoryFullName, $this->number);
 
-        dump('PullRequestsSync job executed', $url);
-        // dd('deu certo');
-
-        $pullRequestsResponse = Http::withToken(config('services.github.personal_access_token'))
-            ->get($url);
-
-        $pullRequest = $pullRequestsResponse->json();
         PullRequest::create(
             [
                 'api_id'        => $pullRequest['id'],
