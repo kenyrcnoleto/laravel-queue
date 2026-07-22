@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Github\Commands;
+namespace App\Services\Github\Console\Commands;
 
 use Illuminate\Console\Command;
 
@@ -11,7 +11,7 @@ class PullRequestOneSync extends Command
      *
      * @var string
      */
-    protected $signature = 'app:pull-requests-one-sync {repositoryFullName}';
+    protected $signature = 'github:pull-requests-one-sync {repositoryFullName}';
 
     /**
      * The console command description.
