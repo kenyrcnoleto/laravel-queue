@@ -1,11 +1,14 @@
--> Authentication
-    -> GitHub App(OAuth2)
-    -> Personal Access Token
 -> Rate Limiting
+    -Precisa fazer a nível de jobs
 ->Best Practices
     ->Webhooks
 ->Travar a versão da API
     -No postman (Ok)
     -No codigo
 
-->Fzer a autenticação e comsumir o endpoint
+-> Authentication
+    -> GitHub App(OAuth2)
+        -vai ser bonus
+    -> Personal Access Token (ok)
+
+
