@@ -25,6 +25,7 @@ class PullRequestOneSync extends Command
      */
     public function handle()
     {
-        \App\Jobs\PullRequestsSync::dispatch($this->argument('repositoryFullName'));
+        // \App\Jobs\PullRequestsSync::dispatch($this->argument('repositoryFullName'));
+        \App\Services\Github\Jobs\PullRequestOneSync::dispatch($this->argument('repositoryFullName'));
     }
 }

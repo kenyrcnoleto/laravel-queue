@@ -8,12 +8,14 @@ class PullRequestReviewersRequestedService
 {
    public function getAll(string $repositoryFullName, int $pullRequestNumber): array
    {
-       $url = 'https://api.github.com/repos/' . $repositoryFullName . '/pulls/' . $pullRequestNumber . '/requested_reviewers';
+       $url = 'repos/' . $repositoryFullName . '/pulls/' . $pullRequestNumber . '/requested_reviewers';
 
-       $pullRequestResponse = Http::withToken(config('services.github.personal_access_token'))
-           ->get($url);
+    //    $pullRequestResponse = Http::withToken(config('services.github.personal_access_token'))
+    //        ->get($url);
 
-       return $pullRequestResponse->json();
+    $response = (new Client())->http()->get($url);
+
+       return $response->json();
    }
 
 

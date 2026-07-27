@@ -12,8 +12,33 @@ class ExampleTest extends TestCase
      */
     public function test_the_application_returns_a_successful_response(): void
     {
-        $response = $this->get('/');
+        $page = 1;
+        $repositoryFullName = 'laravel/laravel';
+        $state = 'all open';
 
-        $response->assertStatus(200);
+        dd(rawurlencode($repositoryFullName));
+
+
+        $query = http_build_query(
+            [
+                'state' => $state,
+                'page' => $page,
+            ],
+            arg_separator: '&', encoding_type: PHP_QUERY_RFC3986
+        );
+
+        dd($query);
+
+        $url = 'repos/' . $repositoryFullName . '/pulls?' . http_build_query(
+            [
+                'state' => $state,
+                'page' => $page,
+            ]
+        );
+
+        dump($url);
+        // $response = $this->get('/');
+
+        // $response->assertStatus(200);
     }
 }

@@ -8,7 +8,15 @@ class PullRequestService
 {
    public function getPullRequests(string $repositoryFullName, int $page = 1): array
    {
-       $url = 'repos/' . $repositoryFullName . '/pulls?state=all&page=' . $page;
+         $queryString = http_build_query(
+            [
+                'state' => 'all',
+                'page' => $page,
+            ],
+            arg_separator: '&', encoding_type: PHP_QUERY_RFC3986
+        );
+
+       $url = 'repos/' . $repositoryFullName . '/pulls?' . $queryString;
 
     //    $pullRequestResponse = Http::withToken(config('services.github.personal_access_token'))
     //        ->get($url);
