@@ -2,14 +2,16 @@
 
 namespace App\Services\Github\Jobs;
 
+use App\Models\Collaborator;
 use App\Models\PullRequest;
+use App\Services\Github\PullRequestReviewersRequestedService;
 use App\Services\Github\PullRequestService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
-class PullRequestSync implements ShouldQueue
+class PullRequestReviewersRequestedSync implements ShouldQueue
 {
     use Queueable;
 
@@ -20,7 +22,7 @@ class PullRequestSync implements ShouldQueue
     //Ir para api pegar os dados do PR
     //Salvar o PR no banco de dados
 
-    public function __construct(public string $repositoryFullName, public int $number)
+    public function __construct(public string $repositoryFullName, public int $pullRequestNumber)
     {
         //
     }
@@ -30,20 +32,27 @@ class PullRequestSync implements ShouldQueue
      */
     public function handle(): void
     {
-        $pullRequest = (new PullRequestService())->getPullRequest($this->repositoryFullName, $this->number);
+        //chamara aclasse de serviço para pegar os dados do PR na API do Github
+        $response =(new PullRequestReviewersRequestedService())->getAll($this->repositoryFullName, $this->pullRequestNumber);
 
-        PullRequest::create(
-            [
-                'api_id'        => $pullRequest['id'],
-                'api_number'    => $pullRequest['number'],
-                'state'         => $pullRequest['state'],
-                'title'         => $pullRequest['title'],
-                'commits_total' => $pullRequest['commits'],
-                'api_created_at'=> Carbon::parse($pullRequest['created_at'])->format('Y-m-d H:i:s'),
-                'api_updated_at'=> Carbon::parse($pullRequest['updated_at'])->format('Y-m-d H:i:s'),
-                'api_closed_at' => Carbon::parse($pullRequest['closed_at'])->format('Y-m-d H:i:s'),
-                'api_merged_at' => Carbon::parse($pullRequest['merged_at'])->format('Y-m-d H:i:s'),
-            ]
-        );
+        //Pegar os dados dos colaboradores que foram solicitados para revisar o PR
+            $collaborators = $response['users'];
+
+            foreach ($collaborators as $collaborator) {
+                $collaborator = Collaborator::updateOrCreate(
+                    [
+                        'api_id' => $collaborator['id'],
+                    ],
+                    [
+                        'login' => $collaborator['login'],
+                    ]
+                );
+                //Pegar o PR do banco de dados
+            $pr = PullRequest::where('api_number', $this->pullRequestNumber)->first();
+
+            $collaborator->pullRequests()->attach($pr->id);
+            //O que seria esses attach? seria para salvar no banco de dados a relação entre o PR e o colaborador que foi solicitado a revisar o PR
+            }
+
     }
 }

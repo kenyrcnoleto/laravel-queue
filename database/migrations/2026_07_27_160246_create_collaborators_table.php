@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('collaborators', function (Blueprint $table) {
             $table->id();
+            $table->string('login');
+            $table->string('api_id');
             $table->timestamps();
+
+            $table->unique('login');
         });
     }
 

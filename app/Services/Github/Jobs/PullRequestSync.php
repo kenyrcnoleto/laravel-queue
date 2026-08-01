@@ -45,5 +45,7 @@ class PullRequestSync implements ShouldQueue
                 'api_merged_at' => Carbon::parse($pullRequest['merged_at'])->format('Y-m-d H:i:s'),
             ]
         );
+
+        PullRequestReviewersRequestedSync::dispatch($this->repositoryFullName, $this->number);
     }
 }

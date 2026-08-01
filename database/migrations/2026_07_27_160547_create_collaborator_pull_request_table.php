@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('collaborator_pull_request', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('collaborator_id')->constrained()->onDelete('cascade');
+            $table->foreignId('pull_request_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
