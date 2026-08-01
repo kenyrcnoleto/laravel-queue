@@ -32,7 +32,7 @@ class PullRequestSync implements ShouldQueue
     {
         $pullRequest = (new PullRequestService())->getPullRequest($this->repositoryFullName, $this->number);
 
-        PullRequest::create(
+        $pr =PullRequest::create(
             [
                 'api_id'        => $pullRequest['id'],
                 'api_number'    => $pullRequest['number'],

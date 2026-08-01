@@ -14,6 +14,6 @@ class Collaborator extends Model
 
     public function pullRequests(): BelongsToMany
     {
-        return $this->belongsToMany(PullRequest::class, 'collaborator_pull_request');
+        return $this->belongsToMany(PullRequest::class, 'collaborator_pull_request')->withTimestamps();
     }
 }
