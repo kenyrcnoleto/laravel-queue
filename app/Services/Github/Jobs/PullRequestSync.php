@@ -46,6 +46,6 @@ class PullRequestSync implements ShouldQueue
             ]
         );
 
-        PullRequestReviewersRequestedSync::dispatch($this->repositoryFullName, $this->number);
+        PullRequestReviewersRequestedSync::dispatch($this->repositoryFullName, $pr);
     }
 }
