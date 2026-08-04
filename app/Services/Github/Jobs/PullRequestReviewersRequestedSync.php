@@ -8,12 +8,14 @@ use App\Services\Github\PullRequestReviewersRequestedService;
 use App\Services\Github\PullRequestService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Bus\Batchable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class PullRequestReviewersRequestedSync implements ShouldQueue
 {
     use Queueable;
+    use Batchable;
 
     /**
      * Create a new job instance.
@@ -39,7 +41,8 @@ class PullRequestReviewersRequestedSync implements ShouldQueue
             $collaborators = $response['users'];
 
             foreach ($collaborators as $collaborator) {
-              PullRequestReviewerRequestedSync::dispatch($this->pullRequest, $collaborator);
+                $this->batch()->add(new PullRequestReviewerRequestedSync($collaborator, $this->pullRequest));
+            //   PullRequestReviewerRequestedSync::dispatch($this->pullRequest, $collaborator);
             }
 
     }

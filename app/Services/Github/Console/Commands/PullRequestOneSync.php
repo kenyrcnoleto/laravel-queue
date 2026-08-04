@@ -3,6 +3,7 @@
 namespace App\Services\Github\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Bus;
 
 class PullRequestOneSync extends Command
 {
@@ -25,7 +26,15 @@ class PullRequestOneSync extends Command
      */
     public function handle()
     {
-        // \App\Jobs\PullRequestsSync::dispatch($this->argument('repositoryFullName'));
-        \App\Services\Github\Jobs\PullRequestOneSync::dispatch($this->argument('repositoryFullName'));
+
+        Bus::batch([
+            new  \App\Services\Github\Jobs\PullRequestOneSync($this->argument('repositoryFullName')),
+            ])
+            ->then(function() {
+                info('All jobs completed successfully.');
+            })
+            ->dispatch();
+            // \App\Jobs\PullRequestsSync::dispatch($this->argument('repositoryFullName'));
+            // \App\Services\Github\Jobs\PullRequestOneSync::dispatch($this->argument('repositoryFullName'));
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Bus;
 
 class PullRequestsSync extends Command
 {
@@ -25,6 +26,8 @@ class PullRequestsSync extends Command
      */
     public function handle()
     {
-        \App\Jobs\PullRequestsSync::dispatch($this->argument('repositoryFullName'));
+        Bus::batch([
+            new \App\Jobs\PullRequestsSync($this->argument('repositoryFullName')),
+        ])->dispatch();
     }
 }

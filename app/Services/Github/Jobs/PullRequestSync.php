@@ -6,12 +6,14 @@ use App\Models\PullRequest;
 use App\Services\Github\PullRequestService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Bus\Batchable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class PullRequestSync implements ShouldQueue
 {
     use Queueable;
+    use Batchable;
 
     /**
      * Create a new job instance.
@@ -46,6 +48,7 @@ class PullRequestSync implements ShouldQueue
             ]
         );
 
-        PullRequestReviewersRequestedSync::dispatch($this->repositoryFullName, $pr);
+        $this->batch()->add(new PullRequestReviewersRequestedSync($this->repositoryFullName, $pr));
+        // PullRequestReviewersRequestedSync::dispatch($this->repositoryFullName, $pr);
     }
 }

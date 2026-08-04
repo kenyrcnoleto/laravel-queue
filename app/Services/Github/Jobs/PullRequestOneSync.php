@@ -4,6 +4,7 @@ namespace App\Services\Github\Jobs;
 
 use App\Models\PullRequest;
 use App\Services\Github\PullRequestService;
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Carbon;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Http;
 class PullRequestOneSync implements ShouldQueue
 {
     use Queueable;
+    use Batchable;
 
 
 
@@ -35,7 +37,8 @@ class PullRequestOneSync implements ShouldQueue
 
        foreach ($pullRequests as $pullRequest) {
             //Salvar cada pull request em um job separado, para evitar sobrecarga de memória e processamento.
-            PullRequestSync::dispatch($this->repositoryFullName, $pullRequest['number']);
+            $this->batch()->add([new PullRequestSync($this->repositoryFullName, $pullRequest['number'])]);
+            // PullRequestSync::dispatch($this->repositoryFullName, $pullRequest['number']);
        }
 
        $nextPage = $this->page + 1;

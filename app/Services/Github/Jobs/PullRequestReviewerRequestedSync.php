@@ -8,12 +8,14 @@ use App\Services\Github\PullRequestReviewersRequestedService;
 use App\Services\Github\PullRequestService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Bus\Batchable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class PullRequestReviewerRequestedSync implements ShouldQueue
 {
     use Queueable;
+    use Batchable;
 
     /**
      * Create a new job instance.

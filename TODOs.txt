@@ -12,3 +12,41 @@
     -> Personal Access Token (ok)
 
 
+
+------
+Bus Batch explicação
+
+//garante que os jobs sejam executados em ordem, mesmo que um job falhe, os outros jobs não serão executados
+    Bus::chain([
+        Bus::batch([
+            new Job1,
+            new Job2,
+        ]),
+        Bus::batch([
+            new Job3,
+            new Job4,
+        ])
+    ]);
+
+    //eles não serão executados em ordem, se um job falhar, os outros jobs serão executados
+    //batch de chain de jobs, somente o chain de jobs será executado em ordem, se um job falhar, os outros jobs não serão executados
+    Bus::batch([
+        [
+            new Job1,
+            new Job2,
+            new Job3,
+        ],
+        [
+            new Job4,
+            new Job5,
+            new Job6,
+        ]
+    ])->then(function () {
+        // Handle successful completion
+    })->catch(function (Exception $e) {
+        // Handle failure
+    })->finally(function () {
+        // The batch has finished executing
+    })->dispatch();
+
+
