@@ -40,10 +40,13 @@ class PullRequestReviewersRequestedSync implements ShouldQueue
         //Pegar os dados dos colaboradores que foram solicitados para revisar o PR
             $collaborators = $response['users'];
 
+            $jobs = [];
+
             foreach ($collaborators as $collaborator) {
-                $this->batch()->add(new PullRequestReviewerRequestedSync($collaborator, $this->pullRequest));
-            //   PullRequestReviewerRequestedSync::dispatch($this->pullRequest, $collaborator);
+                $jobs[] = new PullRequestReviewerRequestedSync($collaborator, $this->pullRequest);
             }
+
+            $this->batch()->add($jobs);
 
     }
 }

@@ -29,10 +29,13 @@ class PullRequestOneSync extends Command
 
         Bus::batch([
             new  \App\Services\Github\Jobs\PullRequestOneSync($this->argument('repositoryFullName')),
+            new \App\Services\Github\Jobs\FailedJob(),
             ])
             ->then(function() {
                 info('All jobs completed successfully.');
             })
+            ->name('PullRequestOneSync Batch')
+            ->allowFailures()
             ->dispatch();
             // \App\Jobs\PullRequestsSync::dispatch($this->argument('repositoryFullName'));
             // \App\Services\Github\Jobs\PullRequestOneSync::dispatch($this->argument('repositoryFullName'));
