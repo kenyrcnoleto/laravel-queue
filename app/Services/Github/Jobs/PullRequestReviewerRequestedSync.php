@@ -9,6 +9,7 @@ use App\Services\Github\PullRequestService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Bus\Batchable;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
@@ -25,6 +26,13 @@ class PullRequestReviewerRequestedSync implements ShouldQueue
     public function __construct(public array $collaboratorRaw, public PullRequest $pullRequest)
     {
         //
+    }
+
+    public function middleware(): array
+    {
+        return [
+            new SkipIfBatchCancelled
+        ];
     }
 
     /**

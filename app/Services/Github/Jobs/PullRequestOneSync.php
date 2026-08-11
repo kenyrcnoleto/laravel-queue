@@ -7,6 +7,7 @@ use App\Services\Github\PullRequestService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
@@ -20,6 +21,13 @@ class PullRequestOneSync implements ShouldQueue
     public function __construct(public string $repositoryFullName, public ?int $page = 1)
     {
         //
+    }
+
+    public function middleware(): array
+    {
+        return [
+            new SkipIfBatchCancelled
+        ];
     }
 
     /**

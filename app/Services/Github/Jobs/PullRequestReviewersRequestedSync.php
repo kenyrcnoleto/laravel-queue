@@ -9,6 +9,7 @@ use App\Services\Github\PullRequestService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Bus\Batchable;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
@@ -29,11 +30,20 @@ class PullRequestReviewersRequestedSync implements ShouldQueue
         //
     }
 
+    public function middleware(): array
+    {
+        return [
+            new SkipIfBatchCancelled
+        ];
+    }
+
     /**
      * Execute the job.
      */
     public function handle(): void
     {
+
+
         //chamara aclasse de serviço para pegar os dados do PR na API do Github
         $response =(new PullRequestReviewersRequestedService())->getAll($this->repositoryFullName, $this->pullRequest->api_number);
 
