@@ -40,7 +40,7 @@ class PullRequestOneSync implements ShouldQueue
        foreach ($pullRequests as $pullRequest) {
             //Salvar cada pull request em um job separado, para evitar sobrecarga de memória e processamento.
             $jobs[] = new PullRequestSync($this->repositoryFullName, $pullRequest['number']);
-            // $this->batch()->add([new PullRequestSync($this->repositoryFullName, $pullRequest['number'])]);
+            // $this->batch()->add([new PullRequestSync($this->repositoryFullName, $pullRequgit sest['number'])]);
             // PullRequestSync::dispatch($this->repositoryFullName, $pullRequest['number']);
        }
 
