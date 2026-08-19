@@ -40,16 +40,16 @@ class PullRequestOneSync extends Command
 
             // Cout dos Prs - muito lenta e complexa, então não é possível fazer isso em tempo real, então vamos criar uma tabela para armazenar o total de PRs e atualizar essa tabela a cada sync
             ])
-            ->then(function() {
+            ->then(function() use ($repositoryFullName) {
 
                 Bus::batch([
                     new \App\Services\Github\Jobs\ComputedPullRequestsCount(),
 
                 ])
-                 ->then(function() {
+                 ->then(function()  {
                      info('All computed data jobs completed successfully.');
                 })
-                ->name('github computed data sync')
+                ->name('github computed data sync: [' . $repositoryFullName .']' )
                 ->allowFailures()
                 ->dispatch();
 
