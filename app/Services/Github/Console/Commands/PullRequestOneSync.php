@@ -29,19 +29,25 @@ class PullRequestOneSync extends Command
 
     $repositoryFullName = $this->argument('repositoryFullName');
         Bus::batch([
-            new  \App\Services\Github\Jobs\PullRequestOneSync($repositoryFullName),
-            // new \App\Services\Github\Jobs\FailedJob(),
+            [
 
-            //Sync todos os dados do repositório
-            //Compute data
-            //Computed tables
-            //total users = 10
-            // Saber quantos PRs tem ao todo na aplicação
+                new  \App\Services\Github\Jobs\PullRequestOneSync($repositoryFullName),
+                // new \App\Services\Github\Jobs\FailedJob(),
 
-            // Cout dos Prs - muito lenta e complexa, então não é possível fazer isso em tempo real, então vamos criar uma tabela para armazenar o total de PRs e atualizar essa tabela a cada sync
+                //Sync todos os dados do repositório
+                //Compute data
+                //Computed tables
+                //total users = 10
+                // Saber quantos PRs tem ao todo na aplicação
+
+                // Cout dos Prs - muito lenta e complexa, então não é possível fazer isso em tempo real, então vamos criar uma tabela para armazenar o total de PRs e atualizar essa tabela a cada sync
+
+                 new \App\Services\Github\Jobs\ComputedPullRequestsCount(),
+            ],
             ])
             ->then(function() use ($repositoryFullName) {
 
+            /*
                 Bus::batch([
                     new \App\Services\Github\Jobs\ComputedPullRequestsCount(),
 
@@ -52,13 +58,14 @@ class PullRequestOneSync extends Command
                 ->name('github computed data sync: [' . $repositoryFullName .']' )
                 ->allowFailures()
                 ->dispatch();
+                */
 
                 // new ComputedPullRequestsCount::dispatch();
                 // new ComputedUsersCount::dispatch();
                 // new ComputedCommitsCount::dispatch();
                 // new ComputedCollaboratorsCount::dispatch();
 
-                // info('All jobs completed successfully.');
+                 info('All jobs completed successfully.');
             })
             ->name('github repository sync: ' . $repositoryFullName)
             ->allowFailures()

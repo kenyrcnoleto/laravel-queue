@@ -53,10 +53,11 @@ class PullRequestReviewersRequestedSync implements ShouldQueue
             $jobs = [];
 
             foreach ($collaborators as $collaborator) {
-                $jobs[] = new PullRequestReviewerRequestedSync($collaborator, $this->pullRequest);
+                $this->prependToChain(new PullRequestReviewerRequestedSync($collaborator, $this->pullRequest));
+                // $jobs[] = new PullRequestReviewerRequestedSync($collaborator, $this->pullRequest);
             }
 
-            $this->batch()->add($jobs);
+            // $this->batch()->add($jobs);
 
     }
 }

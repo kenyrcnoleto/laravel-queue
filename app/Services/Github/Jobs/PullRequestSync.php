@@ -56,7 +56,8 @@ class PullRequestSync implements ShouldQueue
             ]
         );
 
-        $this->batch()->add(new PullRequestReviewersRequestedSync($this->repositoryFullName, $pr));
+        $this->prependToChain(new PullRequestReviewersRequestedSync($this->repositoryFullName, $pr));
+        // $this->batch()->add(new PullRequestReviewersRequestedSync($this->repositoryFullName, $pr));
         // PullRequestReviewersRequestedSync::dispatch($this->repositoryFullName, $pr);
     }
 }
